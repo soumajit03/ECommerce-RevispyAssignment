@@ -19,12 +19,30 @@ function App() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogin = (formData: { email: string; password: string }) => {
-    console.log('User logged in:', formData);
+
+
+  
+  const handleLogin = async (formData: { email: string; password: string }) => {
+  try {
+    const response = await loginUser(formData);
+    const { name } = response.data;
+
+    const userData = {
+      name,
+      email: formData.email,
+      password: formData.password, // optional: not needed after login
+    };
+
+    setUserData(userData);
     setIsLoggedIn(true);
     setCurrentState('interests');
     alert(`Login successful! Email: ${formData.email}`);
-  };
+  } catch (error) {
+    console.error('Login failed:', error);
+    alert('Login failed. Please try again.');
+  }
+};
+
 
   const handleSignUp = async (formData: UserData) => {
     try {
