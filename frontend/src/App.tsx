@@ -4,6 +4,7 @@ import SignUpForm from './components/SignUpForm';
 import VerificationForm from './components/VerificationForm';
 import LoginForm from './components/LoginForm';
 import InterestsPage from './components/InterestsPage';
+import { registerUser } from './api'; // ✅ Import the API function
 
 type AppState = 'login' | 'signup' | 'verification' | 'verified' | 'interests';
 
@@ -20,16 +21,21 @@ function App() {
 
   const handleLogin = (formData: { email: string; password: string }) => {
     console.log('User logged in:', formData);
-    setUserData({ name: 'User', email: formData.email, password: '' }); // assuming placeholder name
     setIsLoggedIn(true);
     setCurrentState('interests');
     alert(`Login successful! Email: ${formData.email}`);
   };
 
-  const handleSignUp = (formData: UserData) => {
-    setUserData(formData);
-    setCurrentState('verification');
-    console.log('User signed up:', formData);
+  const handleSignUp = async (formData: UserData) => {
+    try {
+      await registerUser(formData); // ✅ API call to backend
+      setUserData(formData);
+      setCurrentState('verification');
+      console.log('User signed up and saved to DB:', formData);
+    } catch (err) {
+      console.error('Registration failed:', err);
+      alert('Registration failed. Please try again.');
+    }
   };
 
   const handleVerification = (code: string) => {
@@ -38,18 +44,9 @@ function App() {
     alert(`Account verified successfully! Code: ${code}`);
   };
 
-  const handleBackToSignUp = () => {
-    setCurrentState('signup');
-  };
-
-  const switchToSignUp = () => {
-    setCurrentState('signup');
-  };
-
-  const switchToLogin = () => {
-    setCurrentState('login');
-  };
-
+  const handleBackToSignUp = () => setCurrentState('signup');
+  const switchToSignUp = () => setCurrentState('signup');
+  const switchToLogin = () => setCurrentState('login');
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentState('login');
@@ -62,31 +59,20 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-50 shadow bg-white">
-        <Header userName={isLoggedIn ? userData?.name : undefined} />
-        {/* Future: <Navbar /> can go here */}
-      </header>
+    <div className="min-h-screen bg-gray-50">
+      <Header userName={isLoggedIn ? userData?.name : undefined} />
 
-      {/* Main content */}
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         {currentState === 'login' && (
-          <LoginForm 
-            onLogin={handleLogin}
-            onSwitchToSignUp={switchToSignUp}
-          />
+          <LoginForm onLogin={handleLogin} onSwitchToSignUp={switchToSignUp} />
         )}
 
         {currentState === 'signup' && (
-          <SignUpForm 
-            onSignUp={handleSignUp}
-            onSwitchToLogin={switchToLogin}
-          />
+          <SignUpForm onSignUp={handleSignUp} onSwitchToLogin={switchToLogin} />
         )}
 
         {currentState === 'verification' && userData && (
-          <VerificationForm 
+          <VerificationForm
             email={userData.email}
             onBack={handleBackToSignUp}
             onVerify={handleVerification}
@@ -110,11 +96,8 @@ function App() {
           </div>
         )}
 
-        {currentState === 'interests' && isLoggedIn && userData?.email && (
-          <InterestsPage
-            onLogout={handleLogout}
-            userEmail={userData.email}
-          />
+        {currentState === 'interests' && isLoggedIn && (
+          <InterestsPage onLogout={handleLogout} userEmail={userData?.email!} />
         )}
       </main>
     </div>
