@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://ecommerce-revispyassignmentbackend.onrender.com/api', // Node.js backend
+  baseURL: 'https://ecommerce-revispyassignmentbackend.onrender.com/api', // Your backend URL
 });
 
 // Auth APIs
