@@ -19,7 +19,6 @@ const InterestsPage: React.FC<InterestsPageProps> = ({ onLogout, userEmail }) =>
   const [saving, setSaving] = useState(false);
   const LIMIT = 6;
 
-  // Fetch categories for current page
   const loadCategories = useCallback(async () => {
     try {
       const res = await fetchCategories(currentPage, LIMIT);
@@ -30,9 +29,9 @@ const InterestsPage: React.FC<InterestsPageProps> = ({ onLogout, userEmail }) =>
     }
   }, [currentPage]);
 
-  // Fetch user's saved interests
   const loadUserInterests = useCallback(async () => {
     try {
+      if (!userEmail) return;
       const res = await getUserInterests(userEmail);
       const ids = res.data.categoryIds || [];
       setSelectedIds(ids);
@@ -42,12 +41,12 @@ const InterestsPage: React.FC<InterestsPageProps> = ({ onLogout, userEmail }) =>
     }
   }, [userEmail]);
 
-  // Save updated interests
   const saveInterests = useCallback(async () => {
     try {
+      if (!userEmail) return;
       setSaving(true);
       await saveUserInterests(userEmail, selectedIds);
-      setInitialSelectedIds(selectedIds);
+      setInitialSelectedIds([...selectedIds]);
     } catch (err) {
       console.error('Error saving interests:', err);
     } finally {
@@ -130,7 +129,6 @@ const InterestsPage: React.FC<InterestsPageProps> = ({ onLogout, userEmail }) =>
           )}
         </div>
 
-        {/* Save Button */}
         <div className="mt-6">
           <button
             onClick={saveInterests}
@@ -146,7 +144,6 @@ const InterestsPage: React.FC<InterestsPageProps> = ({ onLogout, userEmail }) =>
         </div>
       </div>
 
-      {/* Pagination */}
       <div className="mt-6 pt-4 border-t border-gray-200">
         <div className="flex flex-wrap justify-center gap-2 text-sm text-gray-500">
           <button
@@ -181,7 +178,6 @@ const InterestsPage: React.FC<InterestsPageProps> = ({ onLogout, userEmail }) =>
         </div>
       </div>
 
-      {/* Logout */}
       <div className="mt-6 pt-6 border-t border-gray-200">
         <button
           onClick={onLogout}
