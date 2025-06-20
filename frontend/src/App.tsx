@@ -114,9 +114,10 @@ function App() {
           </div>
         )}
 
-        {currentState === 'interests' && isLoggedIn && (
-          <InterestsPage onLogout={handleLogout} userEmail={userData?.email!} />
-        )}
+        {currentState === 'interests' && isLoggedIn && userData?.email && (
+  <InterestsPage onLogout={handleLogout} userEmail={userData.email} />
+)}
+
       </main>
     </div>
   );
