@@ -5,6 +5,8 @@ import VerificationForm from './components/VerificationForm';
 import LoginForm from './components/LoginForm';
 import InterestsPage from './components/InterestsPage';
 import { registerUser } from './api'; // ✅ Import the API function
+import { loginUser } from './api';
+
 
 type AppState = 'login' | 'signup' | 'verification' | 'verified' | 'interests';
 
