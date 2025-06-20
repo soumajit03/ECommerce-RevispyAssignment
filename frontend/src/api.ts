@@ -1,25 +1,39 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://ecommerce-revispyassignmentbackend.onrender.com/api', // Your backend URL
+  baseURL: 'https://ecommerce-revispyassignmentbackend.onrender.com/api',
 });
 
-// Auth APIs
-export const registerUser = (data: { name: string; email: string; password: string }) =>
-  API.post('/auth/register', data);
+// ✅ Optional: Global error logger
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
 
-export const loginUser = (data: { email: string; password: string }) =>
-  API.post('/auth/login', data);
+// ✅ Register a new user
+export const registerUser = (formData: {
+  name: string;
+  email: string;
+  password: string;
+}) => API.post('/auth/register', formData);
 
-// Category APIs
+// ✅ Login user (optional if using elsewhere)
+export const loginUser = (formData: {
+  email: string;
+  password: string;
+}) => API.post('/auth/login', formData);
+
+// ✅ Fetch paginated categories
 export const fetchCategories = (page: number, limit: number) =>
   API.get(`/categories?page=${page}&limit=${limit}`);
 
-// User Interests APIs
-export const getUserInterests = (email: string) =>
-  API.get(`/interests?email=${encodeURIComponent(email)}`);
-
+// ✅ Save user interests
 export const saveUserInterests = (email: string, categoryIds: string[]) =>
   API.post('/interests', { email, categoryIds });
 
-export default API;
+// ✅ Get user interests
+export const getUserInterests = (email: string) =>
+  API.get(`/interests?email=${encodeURIComponent(email)}`);
