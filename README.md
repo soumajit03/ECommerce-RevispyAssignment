@@ -1,4 +1,4 @@
-# User Interests Selection App
+# Normal ECommerce Sign-Up and Login Page
 
 This is a full-stack web application that allows users to register, verify their account, log in, and select interests from a list of categories. Selected interests persist across sessions and are saved in the database. The app includes a protected page accessible only to logged-in users.
 
